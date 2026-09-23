@@ -19,6 +19,13 @@ public static class Program
 {
     public static async Task<int> Main(string[] args)
     {
+        // Anchor the working directory to the executable's own folder. Without this, when the
+        // exe is launched from a different working directory (shortcuts, scripts, Task
+        // Scheduler, etc.), Host.CreateApplicationBuilder fails to find appsettings.json and
+        // Serilog's relative "logs/..." file paths resolve elsewhere, so no log files (including
+        // Info logs) are produced.
+        Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+
         // Bootstrap logger captures any failures that occur before the host (and its
         // configuration-driven Serilog pipeline) has finished initializing.
         Log.Logger = new LoggerConfiguration()
